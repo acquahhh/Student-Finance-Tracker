@@ -39,13 +39,19 @@ h1, h2 { line-height: 1.2; }
 }
 .skip-link:focus { top: 0.5rem; }
 
-/* Visible focus on everything interactive */
+/* Visible focus on everything interactive (dark amber: 3:1+ on white) */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
 select:focus-visible {
-  outline: 3px solid #f59e0b;
+  outline: 3px solid #b45309;
   outline-offset: 2px;
+}
+
+/* Light amber on the dark header and skip link */
+header a:focus-visible,
+.skip-link:focus-visible {
+  outline-color: #fbbf24;
 }
 
 header {
@@ -89,7 +95,7 @@ main section {
   to   { opacity: 1; transform: none; }
 }
 
-/* Forms */
+/* ---------- Forms ---------- */
 label { display: block; margin-top: 0.75rem; font-weight: 600; }
 
 input[type="text"], select {
@@ -104,8 +110,12 @@ input[type="text"], select {
 
 input[type="checkbox"] { margin-right: 0.4rem; }
 
-.error { display: block; min-height: 1.2em; color: var(--error); font-size: 0.9rem; }
+input[aria-invalid="true"] { border-color: var(--error); border-width: 2px; }
 
+.error { display: block; min-height: 1.2em; color: var(--error); font-size: 0.9rem; }
+.error.hint { color: #7a4b00; }
+
+/* ---------- Buttons ---------- */
 button {
   margin: 1rem 0.5rem 0 0;
   padding: 0.6rem 1.2rem;
@@ -120,11 +130,17 @@ button {
 button:hover { background: var(--primary-dark); }
 button:active { transform: scale(0.97); }
 
-/* Table */
+/* Smaller buttons inside table rows (edit / delete) */
+td button { margin: 0 0.25rem 0 0; padding: 0.3rem 0.7rem; font-size: 0.9rem; }
+td button.danger { background: var(--error); }
+td button.danger:hover { background: #7f0016; }
+
+/* ---------- Table ---------- */
 .table-wrap { overflow-x: auto; margin-top: 1rem; }
 table { width: 100%; border-collapse: collapse; min-width: 480px; }
 caption { text-align: left; font-weight: 600; padding-bottom: 0.5rem; }
 th, td { padding: 0.5rem; border-bottom: 1px solid var(--border); text-align: left; }
+td.num, th:nth-child(4) { text-align: right; }
 
 mark { background: #fde68a; color: #000; padding: 0 2px; }
 
@@ -142,14 +158,10 @@ footer { text-align: center; padding: var(--space); color: var(--muted); }
 /* ---------- Desktop (1024px) ---------- */
 @media (min-width: 1024px) {
   main { padding: 2rem; }
-  #txn-form { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--space); }
-  #txn-form button { grid-column: auto; justify-self: start; }
+  #txn-form { max-width: 600px; }
 }
 
 /* Respect users who turn animations off */
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
-
-input[aria-invalid="true"] { border-color: var(--error); border-width: 2px; }
-.error.hint { color: #7a4b00; }
