@@ -26,8 +26,10 @@
   <main id="main">
     <section id="about" aria-labelledby="about-h">
       <h2 id="about-h">About</h2>
-      <p>Your purpose text here.</p>
-      <p>Contact: <a href="mailto:e.adomanu@alustudent.com">your email</a> ·
+      <p>Student Finance Tracker is a simple application designed to help university students manage their money,
+         track daily expenses, and understand their spending habits. Inspired by student life at the African Leadership University (ALU),
+          it helps students budget wisely, manage their stipends, and make informed financial decisions.</p>
+      <p>Contact: <a href="mailto:e.adomanu@alustudent.com">e.adomanu@alustudent.com</a> ·
          <a href="https://github.com/acquahhh">GitHub</a></p>
     </section>
 
@@ -44,7 +46,7 @@
       <h2 id="rec-h">Records</h2>
       <label for="search">Search (regex)</label>
       <input id="search" type="text">
-      <label><input id="search-case" type="checkbox"> Case-insensitive</label>
+      <label><input id="search-case" type="checkbox" checked> Case-insensitive</label>
       <label for="sort">Sort by</label>
       <select id="sort">
         <option value="date-desc">Date (newest)</option>
@@ -54,6 +56,7 @@
         <option value="amount-asc">Amount (low to high)</option>
         <option value="amount-desc">Amount (high to low)</option>
       </select>
+      <div id="search-status" role="status" aria-live="polite"></div>
       <div class="table-wrap">
       <table>
         <caption>All transactions</caption>
