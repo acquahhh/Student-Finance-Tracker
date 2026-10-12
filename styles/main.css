@@ -141,6 +141,8 @@ table { width: 100%; border-collapse: collapse; min-width: 480px; }
 caption { text-align: left; font-weight: 600; padding-bottom: 0.5rem; }
 th, td { padding: 0.5rem; border-bottom: 1px solid var(--border); text-align: left; }
 td.num, th:nth-child(4) { text-align: right; }
+td:first-child { white-space: nowrap; }
+td:last-child { white-space: nowrap; }
 
 mark { background: #fde68a; color: #000; padding: 0 2px; }
 
