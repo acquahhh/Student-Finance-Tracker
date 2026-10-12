@@ -48,3 +48,27 @@ export function sortRecords(list, mode) {
   };
   return sorted.sort(by[mode] || by['date-desc']);
 }
+
+export function getById(id) {
+  return records.find((r) => r.id === id);
+}
+
+export function update(id, { description, amount, category, date }) {
+  const record = getById(id);
+  if (!record) return null;
+  record.description = description;
+  record.amount = parseFloat(amount);
+  record.category = category;
+  record.date = date;
+  record.updatedAt = new Date().toISOString(); // createdAt stays unchanged
+  save(records);
+  return record;
+}
+
+export function remove(id) {
+  const index = records.findIndex((r) => r.id === id);
+  if (index === -1) return false;
+  records.splice(index, 1);
+  save(records);
+  return true;
+}

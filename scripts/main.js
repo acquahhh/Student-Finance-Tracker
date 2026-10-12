@@ -10,6 +10,8 @@ import {
   showFieldHint,
   setFormStatus,
   setSearchStatus,
+  setFormMode,
+  fillForm,
   renderTable,
 } from './ui.js';
 import * as state from './state.js';
@@ -20,6 +22,9 @@ const form = document.getElementById('txn-form');
 const searchInput = document.getElementById('search');
 const caseBox = document.getElementById('search-case');
 const sortSelect = document.getElementById('sort');
+const tbody = document.getElementById('records-body');
+
+let editingId = null; // null = adding, otherwise the id being edited
 
 const rules = {
   description: validateDescription,
@@ -28,7 +33,7 @@ const rules = {
   category: validateCategory,
 };
 
-/* ---------- Form validation (from M3) ---------- */
+/* ---------- Form validation ---------- */
 function checkField(fieldId) {
   const value = document.getElementById(fieldId).value;
   const result = rules[fieldId](value);
@@ -60,19 +65,59 @@ form.addEventListener('submit', (event) => {
     return;
   }
 
-  state.add({
+  const data = {
     description: form.description.value,
     amount: form.amount.value,
     category: form.category.value,
     date: form.date.value,
-  });
-  form.reset();
-  setFormStatus('Transaction added.');
+  };
+
+  const wasEditing = editingId !== null;
+  if (wasEditing) {
+    state.update(editingId, data);
+  } else {
+    state.add(data);
+  }
+
+  form.reset(); // the reset handler below also leaves edit mode
+  setFormStatus(wasEditing ? 'Transaction updated.' : 'Transaction added.');
   refresh();
 });
 
 form.addEventListener('reset', () => {
+  editingId = null;
+  setFormMode(false);
   for (const fieldId of Object.keys(rules)) showFieldError(fieldId, '');
+});
+
+/* ---------- Edit and delete (one listener for all rows) ---------- */
+tbody.addEventListener('click', (event) => {
+  const btn = event.target.closest('button[data-action]');
+  if (!btn) return;
+
+  const record = state.getById(btn.dataset.id);
+  if (!record) return;
+
+  if (btn.dataset.action === 'edit') {
+    editingId = record.id;
+    fillForm(record);
+    for (const fieldId of Object.keys(rules)) showFieldError(fieldId, '');
+    setFormMode(true);
+    setFormStatus(`Editing "${record.description}".`);
+    document.getElementById('description').focus();
+  } else if (btn.dataset.action === 'delete') {
+    if (!confirm(`Delete "${record.description}"? This cannot be undone.`)) return;
+
+    state.remove(record.id);
+    if (editingId === record.id) form.reset();
+    refresh();
+    setFormStatus(`Deleted "${record.description}".`);
+
+    // The clicked button no longer exists, so move focus somewhere sensible
+    const heading = document.getElementById('rec-h');
+    heading.setAttribute('tabindex', '-1');
+    heading.focus();
+  }
 });
 
 /* ---------- Render, sort, search ---------- */
