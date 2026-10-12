@@ -150,3 +150,6 @@ footer { text-align: center; padding: var(--space); color: var(--muted); }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
+
+input[aria-invalid="true"] { border-color: var(--error); border-width: 2px; }
+.error.hint { color: #7a4b00; }
