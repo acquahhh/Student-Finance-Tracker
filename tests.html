@@ -43,6 +43,20 @@ check('amount: negative', v.validateAmount('-5').valid, false);
 check('date: 2025-04-31', v.validateDate('2025-04-31').valid, false);
 check('category: double space', v.validateCategory('Fast  food').valid, false);
 check('duplicate: no false match', v.findDuplicateWord('the theater'), null);
+  
+  check('rate: 1450', v.validateRate('1450').valid, true);
+check('rate: 0.92', v.validateRate('0.92').valid, true);
+check('rate: zero', v.validateRate('0').valid, false);
+check('rate: negative', v.validateRate('-2').valid, false);
+check('currency: EUR', v.validateCurrencyCode('EUR').valid, true);
+check('currency: lowercase', v.validateCurrencyCode('eur').valid, false);
+check('import: not array', v.validateImport({}).valid, false);
+check('import: empty array', v.validateImport([]).valid, true);
+check('import: bad record', v.validateImport([{ id: 'x' }]).valid, false);
+check('import: duplicate ids', v.validateImport([
+  { id: 'a', description: 'Tea', amount: 1, category: 'Food', date: '2026-01-01', createdAt: '2026-01-01T00:00:00.000Z', updatedAt: '2026-01-01T00:00:00.000Z' },
+  { id: 'a', description: 'Tea', amount: 1, category: 'Food', date: '2026-01-01', createdAt: '2026-01-01T00:00:00.000Z', updatedAt: '2026-01-01T00:00:00.000Z' },
+]).valid, false);
   </script>
 </body>
 </html>

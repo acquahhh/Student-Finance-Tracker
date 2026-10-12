@@ -75,3 +75,76 @@ export function findDuplicateWord(value) {
   const match = patterns.duplicateWord.exec(value);
   return match ? match[1] : null;
 }
+/* ---------- M6: currency and import validation ---------- */
+
+patterns.currencyCode = /^[A-Z]{3}$/;
+// Positive rate, up to 6 decimals. The negative lookahead (?!0+(\.0+)?$) rejects 0 and 0.0
+patterns.rate = /^(?!0+(\.0+)?$)\d+(\.\d{1,6})?$/;
+patterns.isoTimestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/;
+
+export function validateCurrencyCode(value) {
+  if (!patterns.currencyCode.test(value)) {
+    return { valid: false, message: 'Use a 3-letter code such as USD, EUR or RWF.' };
+  }
+  return { valid: true, message: '' };
+}
+
+export function validateRate(value) {
+  if (typeof value !== 'string' || value === '') {
+    return { valid: false, message: 'Rate is required.' };
+  }
+  if (!patterns.rate.test(value)) {
+    return { valid: false, message: 'Use a number above 0 with up to 6 decimals.' };
+  }
+  return { valid: true, message: '' };
+}
+
+// Checks the whole parsed JSON file. Returns { valid, errors: string[] }
+export function validateImport(data) {
+  const errors = [];
+  if (!Array.isArray(data)) {
+    return { valid: false, errors: ['The file must contain a JSON array of records.'] };
+  }
+
+  const seen = new Set();
+  data.forEach((r, i) => {
+    const n = i + 1;
+    if (r === null || typeof r !== 'object' || Array.isArray(r)) {
+      errors.push(`Record ${n}: must be an object.`);
+      return;
+    }
+
+    if (typeof r.id !== 'string' || r.id.trim() === '') {
+      errors.push(`Record ${n}: missing id.`);
+    } else if (seen.has(r.id)) {
+      errors.push(`Record ${n}: duplicate id "${r.id}".`);
+    } else {
+      seen.add(r.id);
+    }
+
+    const desc = validateDescription(r.description);
+    if (!desc.valid) errors.push(`Record ${n}: description. ${desc.message}`);
+
+    if (typeof r.amount !== 'number' || !Number.isFinite(r.amount)) {
+      errors.push(`Record ${n}: amount must be a number.`);
+    } else {
+      const amt = validateAmount(String(r.amount));
+      if (!amt.valid) errors.push(`Record ${n}: amount. ${amt.message}`);
+    }
+
+    const cat = validateCategory(r.category);
+    if (!cat.valid) errors.push(`Record ${n}: category. ${cat.message}`);
+
+    const date = validateDate(r.date);
+    if (!date.valid) errors.push(`Record ${n}: date. ${date.message}`);
+
+    for (const field of ['createdAt', 'updatedAt']) {
+      const v = r[field];
+      if (typeof v !== 'string' || !patterns.isoTimestamp.test(v) || Number.isNaN(Date.parse(v))) {
+        errors.push(`Record ${n}: ${field} must be an ISO timestamp.`);
+      }
+    }
+  });
+
+  return { valid: errors.length === 0, errors };
+}
