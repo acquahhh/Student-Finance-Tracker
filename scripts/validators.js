@@ -8,10 +8,18 @@ export const patterns = {
   category: /^[A-Za-z]+(?:[ -][A-Za-z]+)*$/,
   // back-reference: \1 must repeat whatever (\w+) captured
   duplicateWord: /\b(\w+)\s+\1\b/i,
+
+  // M6
+  currencyCode: /^[A-Z]{3}$/,
+  // Positive rate, up to 6 decimals. The negative lookahead (?!0+(\.0+)?$) rejects 0 and 0.0
+  rate: /^(?!0+(\.0+)?$)\d+(\.\d{1,6})?$/,
+  isoTimestamp: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/,
 };
 
 const ok = () => ({ valid: true, message: '' });
 const fail = (message) => ({ valid: false, message });
+
+/* ---------- Transaction fields ---------- */
 
 export function validateDescription(value) {
   if (typeof value !== 'string' || value === '') {
@@ -46,7 +54,7 @@ export function validateDate(value) {
   if (!patterns.date.test(value)) {
     return fail('Use the format YYYY-MM-DD, for example 2025-09-29.');
   }
-  // The regex  checks the shape, 
+  // The regex only checks the shape, so confirm the date really exists
   const [y, m, d] = value.split('-').map(Number);
   const date = new Date(y, m - 1, d);
   if (
@@ -75,29 +83,27 @@ export function findDuplicateWord(value) {
   const match = patterns.duplicateWord.exec(value);
   return match ? match[1] : null;
 }
-/* ---------- M6: currency and import validation ---------- */
 
-patterns.currencyCode = /^[A-Z]{3}$/;
-// Positive rate, up to 6 decimals. The negative lookahead (?!0+(\.0+)?$) rejects 0 and 0.0
-patterns.rate = /^(?!0+(\.0+)?$)\d+(\.\d{1,6})?$/;
-patterns.isoTimestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/;
+/* ---------- M6: currency settings ---------- */
 
 export function validateCurrencyCode(value) {
-  if (!patterns.currencyCode.test(value)) {
-    return { valid: false, message: 'Use a 3-letter code such as USD, EUR or RWF.' };
+  if (typeof value !== 'string' || !patterns.currencyCode.test(value)) {
+    return fail('Use a 3-letter code such as USD, EUR or RWF.');
   }
-  return { valid: true, message: '' };
+  return ok();
 }
 
 export function validateRate(value) {
   if (typeof value !== 'string' || value === '') {
-    return { valid: false, message: 'Rate is required.' };
+    return fail('Rate is required.');
   }
   if (!patterns.rate.test(value)) {
-    return { valid: false, message: 'Use a number above 0 with up to 6 decimals.' };
+    return fail('Use a number above 0 with up to 6 decimals.');
   }
-  return { valid: true, message: '' };
+  return ok();
 }
+
+/* ---------- M6: JSON import ---------- */
 
 // Checks the whole parsed JSON file. Returns { valid, errors: string[] }
 export function validateImport(data) {

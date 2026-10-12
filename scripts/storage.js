@@ -1,4 +1,16 @@
 const KEY = 'sft:data';
+const SETTINGS_KEY = 'sft:settings';
+
+const DEFAULT_SETTINGS = {
+  cap: null,
+  base: 'USD',
+  others: [
+    { code: 'EUR', rate: 0.92 },
+    { code: 'RWF', rate: 1450 },
+  ],
+};
+
+/* ---------- Records ---------- */
 
 // Returns an array, or null if nothing saved yet (or data is unreadable)
 export function load() {
@@ -26,8 +38,7 @@ export async function loadSeed() {
   return res.json();
 }
 
-const SETTINGS_KEY = 'sft:settings';
-const DEFAULT_SETTINGS = { cap: null };
+/* ---------- Settings ---------- */
 
 export function loadSettings() {
   try {
@@ -46,14 +57,9 @@ export function saveSettings(settings) {
     return false;
   }
 }
-const DEFAULT_SETTINGS = {
-  cap: null,
-  base: 'USD',
-  others: [
-    { code: 'EUR', rate: 0.92 },
-    { code: 'RWF', rate: 1450 },
-  ],
-};
+
+/* ---------- Import / export ---------- */
+
 export function exportJSON(records) {
   const blob = new Blob([JSON.stringify(records, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
