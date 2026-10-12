@@ -72,3 +72,53 @@ export function remove(id) {
   save(records);
   return true;
 }
+
+function localISO(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+export function getStats(list = records, today = new Date()) {
+  const cents = (r) => Math.round(r.amount * 100);
+
+  const sumCents = list.reduce((s, r) => s + cents(r), 0);
+
+  // Top category by total amount
+  const byCategory = {};
+  for (const r of list) byCategory[r.category] = (byCategory[r.category] || 0) + cents(r);
+  let topCategory = null;
+  let topCents = 0;
+  for (const [cat, c] of Object.entries(byCategory)) {
+    if (topCategory === null || c > topCents) {
+      topCategory = cat;
+      topCents = c;
+    }
+  }
+
+  // Last 7 days, oldest first, ending today
+  const last7 = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const key = localISO(d);
+    const total = list.filter((r) => r.date === key).reduce((s, r) => s + cents(r), 0);
+    last7.push({ date: key, total: total / 100 });
+  }
+
+  // Spending in the current calendar month (for the cap)
+  const monthPrefix = localISO(today).slice(0, 7);
+  const monthCents = list
+    .filter((r) => r.date.startsWith(monthPrefix))
+    .reduce((s, r) => s + cents(r), 0);
+
+  return {
+    count: list.length,
+    sum: sumCents / 100,
+    topCategory,
+    topAmount: topCents / 100,
+    last7,
+    monthSpent: monthCents / 100,
+  };
+}

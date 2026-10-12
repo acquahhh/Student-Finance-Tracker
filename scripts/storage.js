@@ -25,3 +25,24 @@ export async function loadSeed() {
   if (!res.ok) throw new Error('Could not load seed.json');
   return res.json();
 }
+
+const SETTINGS_KEY = 'sft:settings';
+const DEFAULT_SETTINGS = { cap: null };
+
+export function loadSettings() {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    return { ...DEFAULT_SETTINGS, ...(raw ? JSON.parse(raw) : {}) };
+  } catch {
+    return { ...DEFAULT_SETTINGS };
+  }
+}
+
+export function saveSettings(settings) {
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    return true;
+  } catch {
+    return false;
+  }
+}
