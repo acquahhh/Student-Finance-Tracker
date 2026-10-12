@@ -5,7 +5,7 @@
 **Demo video:** <unlisted link, add later>
 
 ## About
-<2-3 sentences: what the app does and who it's for>
+<Student Finance Tracker is a simple application designed to help university students manage their money, track daily expenses, and understand their spending habits. Inspired by student life at the African Leadership University (ALU), it helps students budget wisely, manage their stipends, and make informed financial decisions.>
 
 **Contact:** <e.adomanu@alustudent.com> · <https://github.com/acquahhh/>
 
@@ -26,12 +26,12 @@ Each transaction is stored as:
 
 | Field | Type | Meaning |
 |---|---|---|
-| id | string | <your explanation> |
-| description | string | <...> |
-| amount | number | <...> |
-| category | string | <...> |
-| date | string (YYYY-MM-DD) | <...> |
-| createdAt / updatedAt | ISO string | <...> |
+| id | string | A unique identifier used to distinguish each transaction from others. |
+| description | string | A brief explanation of the transaction, such as lunch, rent, transport, or school supplies. |
+| amount | number | The monetary value of the transaction. |
+| category | string | The spending category assigned to the transaction, such as Food, Housing, Transport, Education, or Other. |
+| date | string (YYYY-MM-DD) | The date the transaction occurred, formatted as year-month-day. |
+| createdAt / updatedAt | ISO string | Timestamps indicating when the transaction was created and when it was last modified. |
 
 ## Wireframes
 **Mobile (360px):** ![mobile wireframe](assets/wireframe-mobile.png)
@@ -44,4 +44,8 @@ Each transaction is stored as:
 - Visible focus styles on all interactive elements
 - `aria-live` regions for the spending cap and form errors
 - Full keyboard-only flow
-- <add your own points>
+- <- Sufficient color contrast between text and background
+- Clear error messages for invalid form inputs
+- Responsive design for mobile, tablet, and desktop screens
+- Descriptive button labels and accessible names for icons
+- Do not rely on color alone to communicate errors or spending statuses>
