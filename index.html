@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Student Finance Tracker</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <script type="module" src="scripts/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header>
+    <h1>Student Finance Tracker</h1>
+    <nav aria-label="Main">
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#dashboard">Dashboard</a></li>
+        <li><a href="#records">Records</a></li>
+        <li><a href="#form">Add / Edit</a></li>
+        <li><a href="#settings">Settings</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section id="about" aria-labelledby="about-h">
+      <h2 id="about-h">About</h2>
+      <p>Your purpose text here.</p>
+      <p>Contact: <a href="mailto:e.adomanu@alustudent.com">your email</a> ·
+         <a href="https://github.com/acquahhh">GitHub</a></p>
+    </section>
+
+    <section id="dashboard" aria-labelledby="dash-h">
+      <h2 id="dash-h">Dashboard</h2>
+      <p id="stat-count">Total records: 0</p>
+      <p id="stat-sum">Total spent: 0</p>
+      <p id="stat-top">Top category: none</p>
+      <div id="cap-message" role="status" aria-live="polite"></div>
+      <div id="trend" aria-label="Last 7 days spending"></div>
+    </section>
+
+    <section id="records" aria-labelledby="rec-h">
+      <h2 id="rec-h">Records</h2>
+      <label for="search">Search (regex)</label>
+      <input id="search" type="text">
+      <label><input id="search-case" type="checkbox"> Case-insensitive</label>
+      <label for="sort">Sort by</label>
+      <select id="sort">
+        <option value="date-desc">Date (newest)</option>
+        <option value="date-asc">Date (oldest)</option>
+        <option value="desc-asc">Description A-Z</option>
+        <option value="desc-desc">Description Z-A</option>
+        <option value="amount-asc">Amount (low to high)</option>
+        <option value="amount-desc">Amount (high to low)</option>
+      </select>
+      <table>
+        <caption>All transactions</caption>
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Description</th>
+            <th scope="col">Category</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="records-body"></tbody>
+      </table>
+    </section>
+
+    <section id="form" aria-labelledby="form-h">
+      <h2 id="form-h">Add / Edit Transaction</h2>
+      <form id="txn-form" novalidate>
+        <label for="description">Description</label>
+        <input id="description" name="description" type="text" aria-describedby="description-err">
+        <span id="description-err" class="error"></span>
+
+        <label for="amount">Amount</label>
+        <input id="amount" name="amount" type="text" inputmode="decimal" aria-describedby="amount-err">
+        <span id="amount-err" class="error"></span>
+
+        <label for="category">Category</label>
+        <input id="category" name="category" type="text" aria-describedby="category-err">
+        <span id="category-err" class="error"></span>
+
+        <label for="date">Date (YYYY-MM-DD)</label>
+        <input id="date" name="date" type="text" aria-describedby="date-err">
+        <span id="date-err" class="error"></span>
+
+        <button type="submit">Save</button>
+        <button type="reset">Cancel</button>
+      </form>
+      <div id="form-status" role="status" aria-live="polite"></div>
+    </section>
+
+    <section id="settings" aria-labelledby="set-h">
+      <h2 id="set-h">Settings</h2>
+      <p>Placeholder: currency, cap, import/export (M5 and M6).</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Acquah Adomanu</p>
+  </footer>
+</body>
+</html>
