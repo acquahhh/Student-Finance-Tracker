@@ -5,7 +5,7 @@
 **Demo video:** <unlisted link, add later>
 
 ## About
-<Student Finance Tracker is a simple application designed to help university students manage their money, track daily expenses, and understand their spending habits. Inspired by student life at the African Leadership University (ALU), it helps students budget wisely, manage their stipends, and make informed financial decisions.>
+Student Finance Tracker is a simple application designed to help university students manage their money, track daily expenses, and understand their spending habits. Inspired by student life at the African Leadership University (ALU), it helps students budget wisely, manage their stipends, and make informed financial decisions.
 
 **Contact:** <e.adomanu@alustudent.com> · <https://github.com/acquahhh/>
 
