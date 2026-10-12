@@ -146,6 +146,50 @@ td:last-child { white-space: nowrap; }
 
 mark { background: #fde68a; color: #000; padding: 0 2px; }
 
+/* ---------- Dashboard ---------- */
+#cap-message, #cap-alert { font-weight: 600; margin-top: 0.5rem; }
+#cap-alert { color: var(--error); }
+#cap-alert:not(:empty) {
+  padding: 0.5rem 0.75rem;
+  border: 2px solid var(--error);
+  border-radius: var(--radius);
+}
+
+#trend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 0.4rem;
+  height: 11rem;
+}
+#trend li {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  font-size: 0.75rem;
+}
+#trend .amt { order: 1; }
+#trend .bar-area { order: 2; position: relative; flex: 1; width: 100%; }
+#trend .day { order: 3; color: var(--muted); }
+#trend .bar {
+  position: absolute;
+  left: 15%;
+  right: 15%;
+  bottom: 0;
+  min-height: 2px;
+  background: var(--primary);
+  border-radius: 4px 4px 0 0;
+  transform-origin: bottom;
+  animation: grow 0.5s ease both;
+}
+@keyframes grow {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
 footer { text-align: center; padding: var(--space); color: var(--muted); }
 
 /* ---------- Tablet (768px) ---------- */
@@ -154,7 +198,7 @@ footer { text-align: center; padding: var(--space); color: var(--muted); }
   header h1 { margin: 0; font-size: 1.6rem; }
   main { padding: 1.5rem; }
   #dashboard { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space); }
-  #dashboard h2, #cap-message, #trend { grid-column: 1 / -1; }
+  #dashboard h2, #cap-message, #cap-alert, #trend-wrap { grid-column: 1 / -1; }
 }
 
 /* ---------- Desktop (1024px) ---------- */

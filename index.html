@@ -34,13 +34,17 @@
          <a href="https://github.com/acquahhh">GitHub</a></p>
     </section>
 
-    <section id="dashboard" aria-labelledby="dash-h">
+        <section id="dashboard" aria-labelledby="dash-h">
       <h2 id="dash-h">Dashboard</h2>
       <p id="stat-count">Total records: 0</p>
-      <p id="stat-sum">Total spent: 0</p>
+      <p id="stat-sum">Total spent: 0.00</p>
       <p id="stat-top">Top category: none</p>
       <div id="cap-message" role="status" aria-live="polite"></div>
-      <div id="trend" aria-label="Last 7 days spending"></div>
+      <div id="cap-alert" role="alert" aria-live="assertive"></div>
+      <div id="trend-wrap">
+        <h3 id="trend-h">Last 7 days</h3>
+        <ol id="trend" aria-labelledby="trend-h"></ol>
+      </div>
     </section>
 
     <section id="records" aria-labelledby="rec-h">
@@ -100,9 +104,16 @@
       <div id="form-status" role="status" aria-live="polite"></div>
     </section>
 
-    <section id="settings" aria-labelledby="set-h">
+       <section id="settings" aria-labelledby="set-h">
       <h2 id="set-h">Settings</h2>
-      <p>Placeholder: currency, cap, import/export (M5 and M6).</p>
+      <form id="settings-form" novalidate>
+        <label for="cap">Monthly spending cap (leave empty for no cap)</label>
+        <input id="cap" name="cap" type="text" inputmode="decimal" aria-describedby="cap-err">
+        <span id="cap-err" class="error"></span>
+        <button type="submit">Save cap</button>
+      </form>
+      <div id="settings-status" role="status" aria-live="polite"></div>
+      <p>Currency and import/export come in M6.</p>
     </section>
   </main>
 

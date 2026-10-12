@@ -10,12 +10,16 @@ import {
   showFieldHint,
   setFormStatus,
   setSearchStatus,
+  setSettingsStatus,
   setFormMode,
   fillForm,
   renderTable,
+  renderStats,
+  renderTrend,
+  renderCap,
 } from './ui.js';
 import * as state from './state.js';
-import { load, loadSeed } from './storage.js';
+import { load, loadSeed, loadSettings, saveSettings } from './storage.js';
 import { compileRegex, searchableCells } from './search.js';
 
 const form = document.getElementById('txn-form');
@@ -23,8 +27,11 @@ const searchInput = document.getElementById('search');
 const caseBox = document.getElementById('search-case');
 const sortSelect = document.getElementById('sort');
 const tbody = document.getElementById('records-body');
+const settingsForm = document.getElementById('settings-form');
+const capInput = document.getElementById('cap');
 
 let editingId = null; // null = adding, otherwise the id being edited
+let settings = loadSettings();
 
 const rules = {
   description: validateDescription,
@@ -113,11 +120,50 @@ tbody.addEventListener('click', (event) => {
     refresh();
     setFormStatus(`Deleted "${record.description}".`);
 
-    // The clicked button no longer exists, so move focus somewhere sensible
     const heading = document.getElementById('rec-h');
     heading.setAttribute('tabindex', '-1');
     heading.focus();
   }
+});
+
+/* ---------- Dashboard ---------- */
+function renderDashboard() {
+  const stats = state.getStats();
+  renderStats(stats);
+  renderTrend(stats.last7);
+  renderCap(stats.monthSpent, settings.cap);
+}
+
+/* ---------- Settings (cap) ---------- */
+capInput.value = settings.cap ?? '';
+
+capInput.addEventListener('input', () => {
+  const value = capInput.value.trim();
+  showFieldError('cap', value === '' ? '' : validateAmount(value).message);
+});
+
+settingsForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const value = capInput.value.trim();
+
+  if (value === '') {
+    settings.cap = null;
+    showFieldError('cap', '');
+  } else {
+    const result = validateAmount(value);
+    showFieldError('cap', result.message);
+    if (!result.valid) {
+      capInput.focus();
+      return;
+    }
+    settings.cap = parseFloat(value);
+  }
+
+  saveSettings(settings);
+  setSettingsStatus(
+    settings.cap === null ? 'Monthly cap removed.' : `Monthly cap saved: ${settings.cap.toFixed(2)}.`
+  );
+  renderDashboard();
 });
 
 /* ---------- Render, sort, search ---------- */
@@ -141,6 +187,7 @@ function refresh() {
     }
   }
   renderTable(list, re);
+  renderDashboard(); // dashboard always covers ALL records, not just the filtered ones
 }
 
 searchInput.addEventListener('input', refresh);

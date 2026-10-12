@@ -63,3 +63,52 @@ export function renderTable(list, re) {
     })
     .join('');
 }
+
+export function setSettingsStatus(message) {
+  document.getElementById('settings-status').textContent = message;
+}
+
+export function renderStats(stats) {
+  document.getElementById('stat-count').textContent = `Total records: ${stats.count}`;
+  document.getElementById('stat-sum').textContent = `Total spent: ${stats.sum.toFixed(2)}`;
+  document.getElementById('stat-top').textContent = stats.topCategory
+    ? `Top category: ${stats.topCategory} (${stats.topAmount.toFixed(2)})`
+    : 'Top category: none';
+}
+
+export function renderTrend(days) {
+  const max = Math.max(...days.map((d) => d.total));
+  document.getElementById('trend').innerHTML = days
+    .map((d) => {
+      const [y, m, day] = d.date.split('-').map(Number);
+      const label = new Date(y, m - 1, day).toLocaleDateString('en', {
+        weekday: 'short',
+        day: 'numeric',
+      });
+      const pct = max > 0 ? (d.total / max) * 100 : 0;
+      return `
+      <li>
+        <span class="day">${label}</span>
+        <span class="amt">${d.total.toFixed(2)}</span>
+        <div class="bar-area" aria-hidden="true"><div class="bar" style="height:${pct}%"></div></div>
+      </li>`;
+    })
+    .join('');
+}
+
+// Polite message when under the cap, assertive alert when over
+export function renderCap(spent, cap) {
+  const polite = document.getElementById('cap-message');
+  const alertBox = document.getElementById('cap-alert');
+
+  if (cap === null || cap === undefined) {
+    polite.textContent = 'No monthly cap set. You can set one in Settings.';
+    alertBox.textContent = '';
+  } else if (spent > cap) {
+    polite.textContent = '';
+    alertBox.textContent = `Over your monthly cap by ${(spent - cap).toFixed(2)}. Spent ${spent.toFixed(2)} of ${cap.toFixed(2)}.`;
+  } else {
+    alertBox.textContent = '';
+    polite.textContent = `Under your monthly cap: ${(cap - spent).toFixed(2)} remaining. Spent ${spent.toFixed(2)} of ${cap.toFixed(2)}.`;
+  }
+}
