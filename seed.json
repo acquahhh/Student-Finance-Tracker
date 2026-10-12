@@ -1,0 +1,14 @@
+[
+  {"id":"txn_0001","description":"Lunch at cafeteria","amount":12.5,"category":"Food","date":"2026-10-12","createdAt":"2026-10-12T09:00:00.000Z","updatedAt":"2026-10-12T09:00:00.000Z"},
+  {"id":"txn_0002","description":"Chemistry textbook","amount":89.99,"category":"Books","date":"2026-10-11","createdAt":"2026-10-11T09:00:00.000Z","updatedAt":"2026-10-11T09:00:00.000Z"},
+  {"id":"txn_0003","description":"Bus pass","amount":45,"category":"Transport","date":"2026-10-10","createdAt":"2026-10-10T09:00:00.000Z","updatedAt":"2026-10-10T09:00:00.000Z"},
+  {"id":"txn_0004","description":"Coffee with friends","amount":8.75,"category":"Entertainment","date":"2026-10-09","createdAt":"2026-10-09T09:00:00.000Z","updatedAt":"2026-10-09T09:00:00.000Z"},
+  {"id":"txn_0005","description":"the the coffee run","amount":3.2,"category":"Food","date":"2026-10-08","createdAt":"2026-10-08T09:00:00.000Z","updatedAt":"2026-10-08T09:00:00.000Z"},
+  {"id":"txn_0006","description":"Tea and snacks (large) + extra","amount":6,"category":"Food","date":"2026-10-07","createdAt":"2026-10-07T09:00:00.000Z","updatedAt":"2026-10-07T09:00:00.000Z"},
+  {"id":"txn_0007","description":"Library fine","amount":0.01,"category":"Fees","date":"2026-10-06","createdAt":"2026-10-06T09:00:00.000Z","updatedAt":"2026-10-06T09:00:00.000Z"},
+  {"id":"txn_0008","description":"Free campus event ticket","amount":0,"category":"Entertainment","date":"2024-02-29","createdAt":"2024-02-29T09:00:00.000Z","updatedAt":"2024-02-29T09:00:00.000Z"},
+  {"id":"txn_0009","description":"Laptop repair","amount":99999.99,"category":"Other","date":"2025-12-31","createdAt":"2025-12-31T09:00:00.000Z","updatedAt":"2025-12-31T09:00:00.000Z"},
+  {"id":"txn_0010","description":"Semester tuition installment","amount":1500,"category":"Fees","date":"2026-01-01","createdAt":"2026-01-01T09:00:00.000Z","updatedAt":"2026-01-01T09:00:00.000Z"},
+  {"id":"txn_0011","description":"Notebook notebook set","amount":4.5,"category":"Books","date":"2026-09-23","createdAt":"2026-09-23T09:00:00.000Z","updatedAt":"2026-09-23T09:00:00.000Z"},
+  {"id":"txn_0012","description":"Group trip to the lake with friends including transport, food, snacks, drinks and a boat rental for the whole afternoon","amount":120.4,"category":"Entertainment","date":"2026-09-30","createdAt":"2026-09-30T09:00:00.000Z","updatedAt":"2026-09-30T09:00:00.000Z"}
+]
