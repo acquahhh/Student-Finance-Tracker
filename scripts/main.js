@@ -3,6 +3,9 @@ import {
   validateAmount,
   validateDate,
   validateCategory,
+  validateCurrencyCode,
+  validateRate,
+  validateImport,
   findDuplicateWord,
 } from './validators.js';
 import {
@@ -17,9 +20,17 @@ import {
   renderStats,
   renderTrend,
   renderCap,
+  renderImportErrors,
 } from './ui.js';
 import * as state from './state.js';
-import { load, loadSeed, loadSettings, saveSettings } from './storage.js';
+import {
+  load,
+  loadSeed,
+  loadSettings,
+  saveSettings,
+  exportJSON,
+  readJSONFile,
+} from './storage.js';
 import { compileRegex, searchableCells } from './search.js';
 
 const form = document.getElementById('txn-form');
@@ -29,6 +40,9 @@ const sortSelect = document.getElementById('sort');
 const tbody = document.getElementById('records-body');
 const settingsForm = document.getElementById('settings-form');
 const capInput = document.getElementById('cap');
+const currencyForm = document.getElementById('currency-form');
+const exportBtn = document.getElementById('export-btn');
+const importInput = document.getElementById('import-file');
 
 let editingId = null; // null = adding, otherwise the id being edited
 let settings = loadSettings();
@@ -40,7 +54,7 @@ const rules = {
   category: validateCategory,
 };
 
-/* ---------- Form validation ---------- */
+/* ---------- Transaction form validation ---------- */
 function checkField(fieldId) {
   const value = document.getElementById(fieldId).value;
   const result = rules[fieldId](value);
@@ -129,12 +143,12 @@ tbody.addEventListener('click', (event) => {
 /* ---------- Dashboard ---------- */
 function renderDashboard() {
   const stats = state.getStats();
-  renderStats(stats);
+  renderStats(stats, settings);
   renderTrend(stats.last7);
-  renderCap(stats.monthSpent, settings.cap);
+  renderCap(stats.monthSpent, settings.cap, settings.base);
 }
 
-/* ---------- Settings (cap) ---------- */
+/* ---------- Settings: cap ---------- */
 capInput.value = settings.cap ?? '';
 
 capInput.addEventListener('input', () => {
@@ -161,9 +175,111 @@ settingsForm.addEventListener('submit', (event) => {
 
   saveSettings(settings);
   setSettingsStatus(
-    settings.cap === null ? 'Monthly cap removed.' : `Monthly cap saved: ${settings.cap.toFixed(2)}.`
+    settings.cap === null
+      ? 'Monthly cap removed.'
+      : `Monthly cap saved: ${settings.cap.toFixed(2)} ${settings.base}.`
   );
   renderDashboard();
+});
+
+/* ---------- Settings: currencies ---------- */
+const currencyRules = {
+  base: (v) => validateCurrencyCode(v.trim().toUpperCase()),
+  'c1-code': (v) => validateCurrencyCode(v.trim().toUpperCase()),
+  'c1-rate': (v) => validateRate(v.trim()),
+  'c2-code': (v) => validateCurrencyCode(v.trim().toUpperCase()),
+  'c2-rate': (v) => validateRate(v.trim()),
+};
+
+function fillCurrencyForm() {
+  document.getElementById('base').value = settings.base;
+  document.getElementById('c1-code').value = settings.others[0].code;
+  document.getElementById('c1-rate').value = settings.others[0].rate;
+  document.getElementById('c2-code').value = settings.others[1].code;
+  document.getElementById('c2-rate').value = settings.others[1].rate;
+}
+
+function checkCurrencyField(id) {
+  const result = currencyRules[id](document.getElementById(id).value);
+  showFieldError(id, result.message);
+  return result.valid;
+}
+
+for (const id of Object.keys(currencyRules)) {
+  document.getElementById(id).addEventListener('input', () => checkCurrencyField(id));
+}
+
+currencyForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+
+  let firstInvalid = null;
+  for (const id of Object.keys(currencyRules)) {
+    if (!checkCurrencyField(id) && !firstInvalid) firstInvalid = id;
+  }
+  if (firstInvalid) {
+    setSettingsStatus('Please fix the currency errors.');
+    document.getElementById(firstInvalid).focus();
+    return;
+  }
+
+  const val = (id) => document.getElementById(id).value.trim();
+  const codes = [val('base'), val('c1-code'), val('c2-code')].map((c) => c.toUpperCase());
+  if (new Set(codes).size !== 3) {
+    showFieldError('c1-code', 'Each currency code must be different.');
+    document.getElementById('c1-code').focus();
+    setSettingsStatus('Currency codes must all be different.');
+    return;
+  }
+
+  settings.base = codes[0];
+  settings.others = [
+    { code: codes[1], rate: parseFloat(val('c1-rate')) },
+    { code: codes[2], rate: parseFloat(val('c2-rate')) },
+  ];
+  saveSettings(settings);
+  fillCurrencyForm(); // shows the uppercased codes
+  setSettingsStatus('Currency settings saved.');
+  renderDashboard();
+});
+
+/* ---------- Settings: import / export ---------- */
+exportBtn.addEventListener('click', () => {
+  exportJSON(state.getAll());
+  renderImportErrors([]);
+  setSettingsStatus(`Exported ${state.getAll().length} records.`);
+});
+
+importInput.addEventListener('change', async () => {
+  const file = importInput.files[0];
+  if (!file) return;
+
+  const { data, error } = await readJSONFile(file);
+  importInput.value = ''; // allows importing the same file again later
+
+  if (error) {
+    renderImportErrors([error]);
+    setSettingsStatus('Import failed. Nothing was changed.');
+    return;
+  }
+
+  const result = validateImport(data);
+  if (!result.valid) {
+    renderImportErrors(result.errors);
+    setSettingsStatus(`Import failed: ${result.errors.length} problem(s) found. Nothing was changed.`);
+    return;
+  }
+
+  if (!confirm(`Replace all ${state.getAll().length} current records with ${data.length} imported records?`)) {
+    renderImportErrors([]);
+    setSettingsStatus('Import cancelled.');
+    return;
+  }
+
+  state.init(data); // replaces the records and saves them
+  form.reset(); // leaves edit mode if it was active
+  renderImportErrors([]);
+  refresh();
+  setSettingsStatus(`Imported ${data.length} records.`);
 });
 
 /* ---------- Render, sort, search ---------- */
@@ -187,7 +303,7 @@ function refresh() {
     }
   }
   renderTable(list, re);
-  renderDashboard(); // dashboard always covers ALL records, not just the filtered ones
+  renderDashboard(); // the dashboard always covers ALL records, not just the filtered ones
 }
 
 searchInput.addEventListener('input', refresh);
@@ -196,6 +312,7 @@ sortSelect.addEventListener('change', refresh);
 
 /* ---------- Start up ---------- */
 async function init() {
+  fillCurrencyForm();
   let data = load();
   if (!data) {
     try {

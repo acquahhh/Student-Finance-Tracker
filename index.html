@@ -104,16 +104,54 @@
       <div id="form-status" role="status" aria-live="polite"></div>
     </section>
 
-       <section id="settings" aria-labelledby="set-h">
+           <section id="settings" aria-labelledby="set-h">
       <h2 id="set-h">Settings</h2>
+
+      <h3>Monthly spending cap</h3>
       <form id="settings-form" novalidate>
-        <label for="cap">Monthly spending cap (leave empty for no cap)</label>
+        <label for="cap">Cap in base currency (leave empty for no cap)</label>
         <input id="cap" name="cap" type="text" inputmode="decimal" aria-describedby="cap-err">
         <span id="cap-err" class="error"></span>
         <button type="submit">Save cap</button>
       </form>
+
+      <h3>Currencies</h3>
+      <p>Amounts are stored in the base currency. Enter rates by hand: how many units of the other currency equal 1 base unit.</p>
+      <form id="currency-form" novalidate>
+        <label for="base">Base currency code</label>
+        <input id="base" type="text" maxlength="3" aria-describedby="base-err">
+        <span id="base-err" class="error"></span>
+
+        <fieldset>
+          <legend>Second currency</legend>
+          <label for="c1-code">Code</label>
+          <input id="c1-code" type="text" maxlength="3" aria-describedby="c1-code-err">
+          <span id="c1-code-err" class="error"></span>
+          <label for="c1-rate">Rate (units per 1 base unit)</label>
+          <input id="c1-rate" type="text" inputmode="decimal" aria-describedby="c1-rate-err">
+          <span id="c1-rate-err" class="error"></span>
+        </fieldset>
+
+        <fieldset>
+          <legend>Third currency</legend>
+          <label for="c2-code">Code</label>
+          <input id="c2-code" type="text" maxlength="3" aria-describedby="c2-code-err">
+          <span id="c2-code-err" class="error"></span>
+          <label for="c2-rate">Rate (units per 1 base unit)</label>
+          <input id="c2-rate" type="text" inputmode="decimal" aria-describedby="c2-rate-err">
+          <span id="c2-rate-err" class="error"></span>
+        </fieldset>
+
+        <button type="submit">Save currencies</button>
+      </form>
+
+      <h3>Backup</h3>
+      <button type="button" id="export-btn">Export JSON</button>
+      <label for="import-file">Import JSON file (replaces all records)</label>
+      <input id="import-file" type="file" accept="application/json,.json">
+      <ul id="import-errors" aria-label="Import errors"></ul>
+
       <div id="settings-status" role="status" aria-live="polite"></div>
-      <p>Currency and import/export come in M6.</p>
     </section>
   </main>
 

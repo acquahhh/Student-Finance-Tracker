@@ -46,3 +46,31 @@ export function saveSettings(settings) {
     return false;
   }
 }
+const DEFAULT_SETTINGS = {
+  cap: null,
+  base: 'USD',
+  others: [
+    { code: 'EUR', rate: 0.92 },
+    { code: 'RWF', rate: 1450 },
+  ],
+};
+export function exportJSON(records) {
+  const blob = new Blob([JSON.stringify(records, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `finance-tracker-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.append(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+// Returns { data } on success or { error } if the file is not valid JSON
+export async function readJSONFile(file) {
+  try {
+    return { data: JSON.parse(await file.text()) };
+  } catch {
+    return { error: 'That file is not valid JSON.' };
+  }
+}
