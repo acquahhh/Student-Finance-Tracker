@@ -190,6 +190,20 @@ mark { background: #fde68a; color: #000; padding: 0 2px; }
   to   { transform: scaleY(1); }
 }
 
+/* ---------- Settings ---------- */
+#settings h3 { margin: 1.5rem 0 0.25rem; font-size: 1.1rem; }
+fieldset {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin: 1rem 0 0;
+  padding: 0 0.75rem 0.75rem;
+}
+legend { font-weight: 600; padding: 0 0.4rem; }
+input[type="file"] { display: block; margin-top: 0.25rem; max-width: 100%; }
+#import-errors { color: var(--error); padding-left: 1.2rem; }
+#import-errors:empty { display: none; }
+#settings-status { margin-top: 1rem; font-weight: 600; }
+
 footer { text-align: center; padding: var(--space); color: var(--muted); }
 
 /* ---------- Tablet (768px) ---------- */
