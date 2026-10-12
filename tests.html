@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Validator tests</title>
+</head>
+<body>
+  <h1>Validator tests</h1>
+  <ul id="results"></ul>
+  <script type="module">
+    import * as v from './scripts/validators.js';
+
+    const results = document.getElementById('results');
+    function check(name, actual, expected) {
+      const li = document.createElement('li');
+      const pass = actual === expected;
+      li.textContent = (pass ? 'PASS: ' : 'FAIL: ') + name;
+      results.append(li);
+    }
+
+    // Each case: name, validator result .valid, expected
+    check('description: normal', v.validateDescription('Lunch at cafeteria').valid, true);
+    check('description: leading space', v.validateDescription(' Lunch').valid, false);
+    check('description: double space', v.validateDescription('Lunch  at').valid, false);
+    check('amount: 12.50', v.validateAmount('12.50').valid, true);
+    check('amount: 0', v.validateAmount('0').valid, true);
+    check('amount: leading zero', v.validateAmount('012').valid, false);
+    check('amount: 3 decimals', v.validateAmount('1.234').valid, false);
+    check('date: leap day', v.validateDate('2024-02-29').valid, true);
+    check('date: fake leap day', v.validateDate('2025-02-29').valid, false);
+    check('date: month 13', v.validateDate('2025-13-01').valid, false);
+    check('category: hyphen', v.validateCategory('Fast-food').valid, true);
+    check('category: digit', v.validateCategory('Food2').valid, false);
+    check('duplicate: found', v.findDuplicateWord('the the coffee'), 'the');
+    check('duplicate: none', v.findDuplicateWord('the coffee'), null);
+
+    check('description: empty', v.validateDescription('').valid, false);
+check('description: only spaces', v.validateDescription('   ').valid, false);
+check('description: trailing space', v.validateDescription('Coffee ').valid, false);
+check('amount: 0.01', v.validateAmount('0.01').valid, true);
+check('amount: large', v.validateAmount('99999.99').valid, true);
+check('amount: negative', v.validateAmount('-5').valid, false);
+check('date: 2025-04-31', v.validateDate('2025-04-31').valid, false);
+check('category: double space', v.validateCategory('Fast  food').valid, false);
+check('duplicate: no false match', v.findDuplicateWord('the theater'), null);
+  </script>
+</body>
+</html>
